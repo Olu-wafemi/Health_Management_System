@@ -7,8 +7,8 @@ const {Doctor_visit} = require('../models/doctor_visits')
 exports.acknowledge_patient = async(req,res) =>{
     const {visit_number} = req.body
 
-    await Patient_visits.findOneAndUpdate({visit_number: visit_number}, {nurse_status: nurse_status})
-
+    await Patient_visits.findOneAndUpdate({visit_number: visit_number}, {nurse_status: 'Acknowlegded'})
+    await Nurse_visits.findOneAndUpdate({visit_number:visit_number},{status: 'Acknowlegded'})
     return res.status(200).json({status: true, message: 'Patient has been acknowlegded Successfully'})
 
 }

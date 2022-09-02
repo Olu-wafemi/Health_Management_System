@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const Patient_visits = mongoose.Schema({
-   reg_number:{
+   card_no:{
        type: String,
        ref: 'Patients'
 
@@ -12,7 +12,7 @@ const Patient_visits = mongoose.Schema({
 
     },
     visit_date:{
-        type: Date
+        type: String
     },
     clinic:{
         type: String

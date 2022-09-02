@@ -4,7 +4,7 @@ const controller = require('../controllers/admin');
 
 
 
-router.post('/register_amin', controller.registerAdmin)
+router.post('/register_admin', controller.registerAdmin)
 
 
 exports.adminRouter = router

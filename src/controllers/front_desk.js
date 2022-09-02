@@ -97,10 +97,14 @@ exports.searchpatient = async(req,res) =>{
 exports.createbill = async(req,res)=>{
 
     const {amount} = req.body
-    const {bill_type} = req.body
+    
     const {payment_type} = req.body
+    const {reason} = rea.body
+    const {card_no} = req.body
+  
     try{
-    const new_bill = new Bills({amount: amount, bill_type: bill_type, payment_type: payment_type})
+
+    const new_bill = new Bills({amount: amount,card_no : card_no, reason: reason, payment_method: payment_type})
 
     new_bill.save()
 
@@ -114,19 +118,25 @@ exports.createbill = async(req,res)=>{
 
 
 exports.create_visit = async(req,res) =>{
-    const {reg_no} = req.body
+    const {card_no} = req.body
     const {clinic } = req.body
     const {nurse_name} = req.body
     const {visit_type} = req.body
     const {bill_status} = req.body
-    const {visit_date} = req.body
+    const {visit_date} = req.body 
+    const {visit_number} = req.body
 
 
-    const new_visit =  new Patient_visits({reg_number: reg_no, clinic:clinic,nurse_name:nurse_name,
-        visit_type:visit_type,bill_status,bill_status})
+    const new_visit =  new Patient_visits({card_no: card_no, clinic:clinic,
+        nurse_name:nurse_name,
+        visit_type:visit_type,
+        bill_status:bill_status,
+        visit_date:visit_date,
+        visit_number: visit_number})
     new_visit.save()
     
-    const nurse_visits = new Nurse_visits({reg_no:reg_no,visit_date:visit_date})
+    const nurse_visits = new Nurse_visits({card_number:card_no,visit_date:visit_date, visit_number: visit_number})
     nurse_visits.save()
 
+    return res.status(200).json({status: true,message: 'Patient has been sent to Nurse Successfully'})
 }
