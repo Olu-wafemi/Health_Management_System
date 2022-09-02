@@ -75,10 +75,19 @@ exports.registerpatient = async(req,res)=>{
 
 exports.searchpatient = async(req,res) =>{
 
-    const {reg_no} = req.body
-    const patient = await Patient.findOne({reg_no: reg_no})
+    const {card_no} = req.body
+    const patient = await Patient.findOne({card_no: card_no})
 
-    return res.status(200).json({status: true, message: 'Retrieved Successfully', patient})
+    if (patient){
+        return res.status(200).json({status: true, message: 'Retrieved Successfully', patient})
+
+    }
+    if(!patient){
+        return res.status(401).json({status: false, message: 'Patient does not exist',})
+
+    }
+
+   
 
 
 
