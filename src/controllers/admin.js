@@ -1,6 +1,6 @@
 
 const {adminSchema} = require('../models/admin')
-
+const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 exports.registerAdmin = async(req,res)=>{
 
@@ -24,7 +24,10 @@ exports.loginAdmin = async(req,res)=>{
     if(check){
         const decryptpassword = await bcrypt.compare(password, check.password)
         if (decryptpassword){
-            return res.status(200).json({status: true, message: 'Signin Successful', data: check})
+
+            const token = jwt.sign({username: check.username,
+                userId: check._id.toString()}, 'secret', { expiresIn: '4h' })
+            return res.status(200).json({status: true,  message: 'Signin Successful', token: token, data: check})
         }
         return res.status(401).json({status: false, message: 'Invalid password'})
     }
