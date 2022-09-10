@@ -15,3 +15,21 @@ exports.registerAdmin = async(req,res)=>{
 
     return res.status(200).json({status: true, message: 'Admin registered Successfully'})
 }
+exports.loginAdmin = async(req,res)=>{
+
+    const {username} = req.body
+    const {password} = req.body
+
+    const check = await adminSchema.findOne({username: username})
+    if(check){
+        const decryptpassword = await bcrypt.compare(password, check.password)
+        if (decryptpassword){
+            return res.status(200).json({status: true, message: 'Signin Successful', data: check})
+        }
+        return res.status(401).json({status: false, message: 'Invalid password'})
+    }
+
+    if(!check){
+        return res.status(401).json({status: false, message: 'Invalid Username'})
+    }
+}
