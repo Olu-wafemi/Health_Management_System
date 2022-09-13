@@ -8,7 +8,7 @@ exports.acknowledge_patient = async(req,res)=>{
     const {doctor_name} = req.body
 
 
-    const acknowlegded = await Doctor_visits.findOneAndUpdate({visit_number},{status: 'Acknowledged', doctor_name:doctor_name})
+    const acknowlegded = await Doctor_visits.findOneAndUpdate({visit_number: visit_number},{status: 'Acknowledged', doctor_name:doctor_name})
 
     return res.status(200).json({status: true, message: 'Patient acknowledged Successfully'})
 
@@ -19,7 +19,7 @@ exports.acknowledge_patient = async(req,res)=>{
 exports.fetch_available_patients =  async (req,res)=>{
 
 
-    const available_patients = await Doctor_visits.find().filter({status: 'Unacknowledged'})
+    const available_patients = await Doctor_visits.find().where  ({status: 'Unacknowledged'})
 
     return res.status(200).json({status:true, message: 'Retrieved Successfully', data: available_patients})
 
@@ -27,11 +27,17 @@ exports.fetch_available_patients =  async (req,res)=>{
 }
 
 exports.get_patient_vitals = async(req,res)=>{
-
+    const {card_number} = req.body
     const {visit_number} = req.body
-    const patient_vitals = await Vitals.findOne({visit_number})
+    const patient_vitals = await Patient_records.findOne({card_no: card_number},{
+        patient_vital:{
+            $elemMatch:{
+                visit_number: visit_number
+            }
+        }
+    })
 
-    return res.status(200).json({status :true, message: 'Retrieved Successfully' })
+    return res.status(200).json({status :true, message: 'Retrieved Successfully', data: patient_vitals })
 
 
 }
@@ -118,24 +124,33 @@ exports.create_bill = async(req,res) =>{
 exports.send_to_pharmacy = async(req,res) =>{
 
     const {visit_number} = req.body
-    const {reg_number} = req.body
+    const {card_number} = req.body
     const {visit_date} = req.body
     const {doctor_name}  = req.body
     const {doctors_prescription} = req.body
-    const new_pharmacy = new Pharmacy_visits({visit_number: visit_number, reg_number: reg_number,visit_date: visit_date,doctor_name: doctor_name})
+    const new_pharmacy = new Pharmacy_visits({visit_number: visit_number, card_number: card_number,visit_date: visit_date,doctor_name: doctor_name})
     for(let i= 0; i < doctors_prescription.length; i++){
-        new_pharmacy.prescription.push(doctors_prescription[i])
+        new_pharmacy.prescription.push({
+            medicine_name: doctors_prescription[i]['medicine_name'],
+            usage_type: doctors_prescription[i]['usage_type'],
+            morning: doctors_prescription[i]['morning'],
+            afternoon: doctors_prescription[i]['afternoon'],
+            night: doctors_prescription[i]['night'],
+            days: doctors_prescription[i]['days'],
+            quantity: doctors_prescription[i]['quantity'],
+            notes: doctors_prescription[i]['notes']
+        })
 
     }
     
     new_pharmacy.save()
 
-    return res.status(200).json({status: true, message: "Saved Successfully"})
+    return res.status(200).json({status: true, message: "Sent to Pharmacy Successfully"})
 
 }
 
 
-exports.send_to_lab() = async(req, res)=>{
+exports.send_to_lab = async(req, res)=>{
     const {reg_number} = req.body
     const {visit_date} = req.body
     const {visit_number} = req.body

@@ -1,17 +1,14 @@
 const mongoose = require('mongoose')
 
 const Pharmacy_visits = mongoose.Schema({
-   reg_number:{
+   card_number:{
        type: String,
        ref: 'patients'
 
    },
    visit_date:{
-       type: Date
-
-   },
-   doctor_id:{
        type: String
+
    },
    visit_number:{
        type: String,
@@ -34,7 +31,8 @@ const Pharmacy_visits = mongoose.Schema({
     night:{type:Boolean},
     days:{type:Number},
     quantity:{type:Number},
-    notes:{type:String}
+    notes:{type:String},
+    _id: false
 
 
    }
@@ -47,4 +45,4 @@ const Pharmacy_visits = mongoose.Schema({
 })
 
 
-exports.Pharmacy_visits  = mongoose.model('doctor_visits', Pharmacy_visits) 
+exports.Pharmacy_visits  = mongoose.model('pharmacy_visits', Pharmacy_visits) 

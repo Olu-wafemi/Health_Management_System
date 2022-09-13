@@ -2,7 +2,7 @@ const {Patient_records} = require('../models/patient_records')
 
 const {Patient_visits} = require('../models/patient_visits')
 const {Nurse_visits} = require('../models/nurse_visits')
-const {Doctor_visit} = require('../models/doctor_visits')
+const {Doctor_visits} = require('../models/doctor_visits')
 
 exports.acknowledge_patient = async(req,res) =>{
     const {visit_number} = req.body
@@ -15,14 +15,14 @@ exports.acknowledge_patient = async(req,res) =>{
 
 exports.fetch_available_patients = async(req,res)=>{
 
-    const available_patients = await Nurse_visits.find().filter({status: 'Unacknowledged'})
+    const available_patients = await Nurse_visits.find().where({status: 'Unacknowledged'})
 
     return res.status(200).json({status:true, message: 'Retrieved Successfully', data: available_patients})
 }
 
 exports.record_patient_vitals = async(req,res) =>{
-    const {reg_number} = req.body
-    const{vist_number } = req.body
+    const {card_number} = req.body
+    const{visit_number } = req.body
     const {visit_date} = req.body
     const {height} = req.body
     const { temperature }= req.body
@@ -32,15 +32,15 @@ exports.record_patient_vitals = async(req,res) =>{
     const {weight} = req.body
     const {blood_sugar} = req.body
 
-    const patient = await Patient_records.findOne({reg_number: reg_number})
+    const patient = await Patient_records.findOne({card_no: card_number})
 
     if(patient){
 
-        patient.updateOne({reg_number: reg_number},{
+        patient.updateOne({card_no:  card_number},{
             $push:{
                 patient_vital:{
                     visit_date: visit_date,
-                    vist_number: vist_number,
+                    vist_number: visit_number,
                     height: height,
                     temperature: temperature,
                     bmi: bmi,
@@ -57,11 +57,11 @@ exports.record_patient_vitals = async(req,res) =>{
         
 
     }
-    const new_patient_vital = new Patient_records({reg_number:reg_number, 
-        $push:{
+    const new_patient_vital = new Patient_records({card_no:card_number, 
+        
             patient_vital:{
                 visit_date: visit_date,
-                vist_number: vist_number,
+                visit_number: visit_number,
                 height: height,
                 temperature: temperature,
                 bmi: bmi,
@@ -72,7 +72,7 @@ exports.record_patient_vitals = async(req,res) =>{
 
 
             }
-        }
+        
         
     })
 
@@ -91,11 +91,11 @@ exports.record_patient_vitals = async(req,res) =>{
 }
 
 exports.create_doctor_visit = async(req,res)=>{
-    const {reg_number} = req.body
-    const{vist_number } = req.body
+    const {card_number} = req.body
+    const{visit_number } = req.body
     const {visit_date} = req.body
 
-    const new_doctor_visit = new Doctor_visit({reg_number: reg_number,visit_date: visit_date,vist_number:vist_number, })
+    const new_doctor_visit = new Doctor_visits({card_number: card_number,visit_date: visit_date,visit_number:visit_number, })
     
     new_doctor_visit.save()
 

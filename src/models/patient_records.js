@@ -18,6 +18,7 @@ const Patient_records = mongoose.Schema({
         heart_rate:{ type: String},
         weight:{type: Number },
         blood_sugar:{type: Number},
+        _id: false
         
     }],
 
