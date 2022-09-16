@@ -61,7 +61,7 @@ exports.registerpatient = async(req,res)=>{
         })
 
         new_patient.save()
-        return res.status(200).json({status: true, message: 'Patient registered Successfully'})
+        return res.status(200).json({status: true, message: 'Patient registered Successfully', data: new_patient})
         
 
     }
