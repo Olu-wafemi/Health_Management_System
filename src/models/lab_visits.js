@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 
 const Lab_visits = mongoose.Schema({
-   reg_number:{
+   card_number:{
        type: String,
        ref: 'patients'
 
    },
    visit_date:{
-       type: Date
+       type: String
 
    },
    visit_number:{
@@ -15,11 +15,10 @@ const Lab_visits = mongoose.Schema({
 
        ref: 'patient_visits'
    },
-   test_details:[{
-       test_name:{type: String},
+  test_name:{type: String},
 
 
-   }],
+   
    status:{
        type: String,
        default: 'Unacknowledged'

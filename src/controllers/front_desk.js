@@ -1,7 +1,7 @@
 const {Patient} = require('../models/patients')
 const {Bills} = require('../models/bills')
 const {Patient_visits} = require('../models/patient_visits')
-
+const {Patient_records} = require('../models/patient_records')
 const {Nurse_visits} = require('../models/nurse_visits')
 
 exports.registerpatient = async(req,res)=>{
@@ -60,7 +60,15 @@ exports.registerpatient = async(req,res)=>{
 
         })
 
+        const new_record = new Patient_records({
+            card_no: card_no
+
+        })
+        new_record.save()
+
         new_patient.save()
+
+    
         return res.status(200).json({status: true, message: 'Patient registered Successfully', data: new_patient})
         
 
@@ -115,8 +123,12 @@ exports.createbill = async(req,res)=>{
     }
 }
 
+exports.fetch_all_patients = async(req,res)=>{
+    const patients = await Patient.find()
 
+    return res.status(200).json({status: true,'message': 'Retrived Successfully', data: patients})
 
+}
 exports.create_visit = async(req,res) =>{
     const {card_no} = req.body
     const {clinic } = req.body

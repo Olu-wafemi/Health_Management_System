@@ -21,11 +21,14 @@ const Patient_records = mongoose.Schema({
         _id: false
         
     }],
+    
 
     complaints:[{
         visit_date:{type: String},
         visit_number:{type: String},
-        complaints: [{type: String}]
+        complaints: [{type: String}],
+        _id: false
+
     }],
     doctors_prescription:[{
         visit_date:{type: String},
@@ -41,14 +44,23 @@ const Patient_records = mongoose.Schema({
             night:{type:Boolean},
             days:{type:Number},
             quantity:{type:Number},
-            notes:{type:String}
+            notes:{type:String},
+            _id: false
         }],
+        _id: false
     
     }],
 
-    lab_results:[{
+    pathology:[{
         visit_number: {type: String},
-        test_name: {type: String}
+        test_name: {type: String},
+        short_name:{type:String},
+        test_type:{type:String},
+        category_name:{type:String},
+        method:{type:String},
+        report_days:{type:String},
+        test_parameter_name:{type:String},
+        _id: false
 
     }]
 

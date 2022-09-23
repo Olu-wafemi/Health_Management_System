@@ -3,6 +3,7 @@ const { adminRouter } = require('./admin')
 const { nurseRouter} = require('./nurses')
 const {doctorRouter} = require('./doctor')
 const {pharmacyRouter} = require('./pharmacy')
+const {labRouter} = require('./lab')
 const index = (app) =>{
 
     app.use('/api/front_desk', frontdeskRouter)
@@ -10,6 +11,7 @@ const index = (app) =>{
     app.use('/api/nurses', nurseRouter)
     app.use('/api/doctors', doctorRouter)
     app.use('/api/pharmacy', pharmacyRouter)
+    app.use('/api/lab', labRouter)
 }
 
 

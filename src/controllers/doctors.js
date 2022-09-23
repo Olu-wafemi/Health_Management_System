@@ -50,25 +50,27 @@ exports.fetch_test_result = async(req,res) =>{
 
 }
 
-exports.doctors_verdict = async(req,res) =>{
-    const {reg_number} = req.body
+exports.add_medication = async(req,res) =>{
+    const {card_number} = req.body
     const {visit_number,visit_date} = req.body
     const {medicine_name}= req.body
     const {usage_type} = req.body
     const {morning} = req.body
     const {afternoon, night, days,quantity, notes} = req.body
     const {doctor_name, doctor_id} = req.body 
-    const patient = await Patient_records.findOne({reg_number: reg_number})
+    const patient = await Patient_records.findOne({card_number: card_number})
 
     if (patient){
-        patient.updateOne({reg_number:reg_number},{
+         await Patient_records.findOneAndUpdate({card_no:card_number},{
 
             $push:{
+                doctors_prescription:{
             visit_date:visit_date,
             visit_number: visit_number,
             doctor_name: doctor_name,
             doctor_id: doctor_id
-            ,$push: {
+                ,
+             
                 drug:{
                 
                 
@@ -83,25 +85,12 @@ exports.doctors_verdict = async(req,res) =>{
                 }
     
             }
-            
+        }
             }
 
 
-            })
+            )
 
-        const new_pharmacy = new Pharmacy_visits({reg_number: reg_number, visit_date:visit_date, visit_number: visit_number, doctor_name: doctor_name,doctor_id: doctor_id, $push:{
-            prescription:{ 
-                medicine_name:medicine_name,
-                usage_type: usage_type,
-                morning: morning,
-                afternoon:afternoon,
-                night:night,
-                days:days,
-                quantity: quantity,
-                notes: notes
-            
-            }}})
-        new_pharmacy.save()
     }
 
     return res.status(200).json({status:true, message: 'Successful'})
@@ -151,13 +140,16 @@ exports.send_to_pharmacy = async(req,res) =>{
 
 
 exports.send_to_lab = async(req, res)=>{
-    const {reg_number} = req.body
+    const {card_number} = req.body
     const {visit_date} = req.body
     const {visit_number} = req.body
     const {test_name} = req.body
     
 
-    const conduct_test = new Lab_visits({reg_number: reg_number, visit_date:visit_date,visit_number:visit_number,test_name:test_name})
+    const conduct_test = new Lab_visits({card_number: card_number, visit_date:visit_date,visit_number:visit_number,
+        
+            test_name: test_name
+    })
     conduct_test.save()
     
 
