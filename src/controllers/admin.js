@@ -7,6 +7,17 @@ exports.registerAdmin = async(req,res)=>{
     const {username} = req.body
     const {password} = req.body
     const {admin_type}= req.body
+    if(!username){
+        return res.status(401).json({status:false, 'message': 'username field is required'})
+    }
+    if(!password){
+        return res.status(401).json({status:false, 'message': 'password field is required'})
+    }
+
+    const check = await adminSchema.findOne({username: username})
+    if(check){
+        return res.status(401).json({status: false, 'message': 'username already exists' })
+    }
 
     const hashed_password = await bcrypt.hash(password,12)
 
@@ -19,6 +30,15 @@ exports.loginAdmin = async(req,res)=>{
 
     const {username} = req.body
     const {password} = req.body
+
+
+    if(!username){
+        return res.status(401).json({status:false, 'message': 'username field is required'})
+    }
+    if(!password){
+        return res.status(401).json({status:false, 'message': 'password field is required'})
+    }
+
 
     const check = await adminSchema.findOne({username: username})
     if(check){
@@ -33,6 +53,6 @@ exports.loginAdmin = async(req,res)=>{
     }
 
     if(!check){
-        return res.status(401).json({status: false, message: 'Invalid Username'})
+        return res.status(401).json({status: false, message: 'Username does not exist'})
     }
 }

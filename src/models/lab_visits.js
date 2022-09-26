@@ -15,6 +15,7 @@ const Lab_visits = mongoose.Schema({
 
        ref: 'patient_visits'
    },
+   test_id:{type:String},
   test_name:{type: String},
 
 

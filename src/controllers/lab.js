@@ -1,6 +1,6 @@
 const { Lab_visits} = require('../models/lab_visits')
 const { Patient_records } = require('../models/patient_records')
-
+const { Patient} = require('../models/patients')
 
 exports.fetch_patients = async(req,res) =>{
     const {visit_date} = req.body
@@ -15,6 +15,9 @@ exports.fetch_patients = async(req,res) =>{
 exports.acknowledge_patient = async(req,res)=>{
     
     const {visit_number} = req.body
+    if(!visit_number){
+        return res.status(401).json({status:false, 'message': 'Visit number cannot be empty'})
+    }
 
     const check = await Lab_visits.findOne({visit_number:visit_number})
 
@@ -24,7 +27,7 @@ exports.acknowledge_patient = async(req,res)=>{
     }
 
     if(!check){
-        return res.status(200).jsom({status:false, message: 'Invalid visit number'})
+        return res.status(200).json({status:false, message: 'Visit number does not exist'})
 
     }
 
@@ -33,6 +36,7 @@ exports.acknowledge_patient = async(req,res)=>{
 }
 exports.create_pathology = async(req,res)=>{
     const {visit_number} = req.body
+    const {test_id} = req.body
     const {card_number} = req.body
     const {test_name} = req.body
     const {short_name} = req.body
@@ -42,13 +46,29 @@ exports.create_pathology = async(req,res)=>{
     const {report_days} = req.body
     const {test_parameter_name} = req.body
 
+    if(!card_number){
+        return res.status(401).json({status:false, 'message': 'Card number cannot be empty'})
+    }
+    if(!test_id){
+        return res.status(401).json({status:false, 'message': 'Test Id cannot be empty'})
+    }
+    if(!visit_number){
+        return res.status(401).json({status:false, 'message': 'Visit number cannot be empty'})
+    }
+    const check = await Patient.findOne({card_no: card_number})
+    if (!check){
+        return res.status(401).json({status: false, message: "patient does not exist"})
+    }
+  
+    
+
     const add_pathology = await Patient_records.findOne({card_no: card_number})
     if (add_pathology){
 
         await Patient_records.findOneAndUpdate({card_no: card_number},{
             $push:{
               pathology:  {
-
+                test_id:test_id,
                 
                 visit_number: visit_number,
                 card_number: card_number,

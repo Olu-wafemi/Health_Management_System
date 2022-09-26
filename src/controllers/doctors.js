@@ -1,11 +1,23 @@
 const {Doctor_visits} = require('../models/doctor_visits')
 const {Patient_records} = require('../models/patient_records')
+const {Patient} = require('../models/patients')
 const {Bills} = require('../models/bills')
 const {Pharmacy_visits} = require('../models/pharmacy_visits')
 const {Lab_visits } = require('../models/lab_visits')
 exports.acknowledge_patient = async(req,res)=>{
     const {visit_number} = req.body
     const {doctor_name} = req.body
+
+    if(!visit_number){
+        return res.status(401).json({status:false, message:"Visit number is required"})
+    }
+    if(!doctor_name){
+        return res.status(401).json({status:false, message:"Doctor name is required"})
+    }
+    const check_visit_number = await Doctor_visits.findOne({visit_number: visit_number})
+    if(!check_visit_number){
+        return res.status(401).json({status: false, message:"Visit number does not exist"})
+    }
 
 
     const acknowlegded = await Doctor_visits.findOneAndUpdate({visit_number: visit_number},{status: 'Acknowledged', doctor_name:doctor_name})
@@ -29,6 +41,22 @@ exports.fetch_available_patients =  async (req,res)=>{
 exports.get_patient_vitals = async(req,res)=>{
     const {card_number} = req.body
     const {visit_number} = req.body
+
+    if(!card_number){
+        return res.status(401).json({status:false, 'message': 'Card number cannot be empty'})
+    }
+    if(!visit_number){
+        return res.status(401).json({status:false, 'message': 'Visit number cannot be empty'})
+    }
+    const check_visit_number = await Doctor_visits.findOne({visit_number: visit_number})
+    if(!check_visit_number){
+        return res.status(401).json({status: false, message:"Visit number does not exist"})
+    }
+
+    const check = await Patient.findOne({card_no: card_number})
+   if (!check){
+       return res.status(401).json({status: false, message: "patient does not exist"})
+   }
     const patient_vitals = await Patient_records.findOne({card_no: card_number},{
         patient_vital:{
             $elemMatch:{
@@ -36,7 +64,6 @@ exports.get_patient_vitals = async(req,res)=>{
             }
         }
     })
-
     return res.status(200).json({status :true, message: 'Retrieved Successfully', data: patient_vitals })
 
 
@@ -58,6 +85,20 @@ exports.add_medication = async(req,res) =>{
     const {morning} = req.body
     const {afternoon, night, days,quantity, notes} = req.body
     const {doctor_name, doctor_id} = req.body 
+
+
+    if(!card_number){
+        return res.status(401).json({status:false, 'message': 'Card number cannot be empty'})
+    }
+    if(!visit_number){
+        return res.status(401).json({status:false, 'message': 'Visit number cannot be empty'})
+    }
+
+    const check = await Patient.findOne({card_no: card_number})
+   if (!check){
+       return res.status(401).json({status: false, message: "patient does not exist"})
+   }
+
     const patient = await Patient_records.findOne({card_number: card_number})
 
     if (patient){
@@ -117,6 +158,22 @@ exports.send_to_pharmacy = async(req,res) =>{
     const {visit_date} = req.body
     const {doctor_name}  = req.body
     const {doctors_prescription} = req.body
+
+    if(!card_number){
+        return res.status(401).json({status:false, 'message': 'Card number cannot be empty'})
+    }
+    if(!visit_number){
+        return res.status(401).json({status:false, 'message': 'Visit number cannot be empty'})
+    }
+
+    const check = await Patient.findOne({card_no: card_number})
+   if (!check){
+       return res.status(401).json({status: false, message: "patient does not exist"})
+   }
+   const check_visit_number = await Pharmacy_visits.findOne({visit_number: visit_number})
+    if(check_visit_number){
+        return res.status(401).json({status: false, message:"Visit number already exists"})
+    }
     const new_pharmacy = new Pharmacy_visits({visit_number: visit_number, card_number: card_number,visit_date: visit_date,doctor_name: doctor_name})
     for(let i= 0; i < doctors_prescription.length; i++){
         new_pharmacy.prescription.push({
@@ -143,10 +200,31 @@ exports.send_to_lab = async(req, res)=>{
     const {card_number} = req.body
     const {visit_date} = req.body
     const {visit_number} = req.body
+    const{test_id} = req.body
     const {test_name} = req.body
-    
+    if(!card_number){
+        return res.status(401).json({status:false, 'message': 'Card number cannot be empty'})
+    }
+    if(!visit_number){
+        return res.status(401).json({status:false, 'message': 'Visit number cannot be empty'})
+    }
+    if(!test_id){
+        return res.status(401).json({status:false, 'message': 'Test Id cannot be empty'})
+    }
 
-    const conduct_test = new Lab_visits({card_number: card_number, visit_date:visit_date,visit_number:visit_number,
+    const check = await Patient.findOne({card_no: card_number})
+   if (!check){
+       return res.status(401).json({status: false, message: "patient does not exist"})
+   }
+   const check_test_id = await Lab_visits.findOne({test_id: test_id})
+
+   if (check_test_id){
+       return res.status(401).json({status: false, message: "Test Id already exists"})
+   }
+
+   
+
+    const conduct_test = new Lab_visits({card_number: card_number,test_id: test_id, visit_date:visit_date,visit_number:visit_number,
         
             test_name: test_name
     })

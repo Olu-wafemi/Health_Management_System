@@ -60,8 +60,36 @@ const Patient_records = mongoose.Schema({
         method:{type:String},
         report_days:{type:String},
         test_parameter_name:{type:String},
+        test_id:{type: String},
         _id: false
 
+    }],
+
+    bills:[{
+        amount:{
+            type: Number
+        },
+
+       
+        reason:{
+            type: String
+    
+        },
+        bill_id:{
+            type: String
+
+        },
+
+        status:{
+            type:String,
+            default: 'Unsettled'
+    
+    
+        },
+        payment_method:{
+            type: String
+    
+        }
     }]
 
 

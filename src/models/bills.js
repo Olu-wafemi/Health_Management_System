@@ -4,15 +4,16 @@ const Bills = mongoose.Schema({
     amount:{
         type: Number
     },
-    reg_number:{
+    card_number:{
         type: String
 
     },
-
-
-    bill_type:{
-        type: String
+    bill_id:{
+        type:String
     },
+
+
+    
     reason:{
         type: String
 

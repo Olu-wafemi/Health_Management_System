@@ -7,7 +7,7 @@ const Nurse_visits = mongoose.Schema({
 
    },
    visit_date:{
-       type: Date
+       type: String
 
    },
    visit_number:{
