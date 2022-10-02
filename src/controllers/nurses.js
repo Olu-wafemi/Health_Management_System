@@ -105,6 +105,11 @@ exports.record_patient_vitals = async(req,res) =>{
     return res.status(200).json({status:true, message: 'Record saved Successfully',})
 }
 
+if(!patient){
+
+    return res.status(404).json({status:false,message: "Patient does not exist"})
+}
+
 
 
 }
