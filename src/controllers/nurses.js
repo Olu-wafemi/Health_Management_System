@@ -63,9 +63,12 @@ exports.record_patient_vitals = async(req,res) =>{
         }
     }
 })
+    
+    if(patient_vitals.patient_vital.length != 0){
     if(patient_vitals.patient_vital[0].visit_number== visit_number){
         return res.status(200).json({status:false, message: "Visit number already exists in Patient's record"})
     }
+}
     const patient = await Patient_records.findOne({card_no: card_number})
 
     if(patient){
@@ -90,7 +93,7 @@ exports.record_patient_vitals = async(req,res) =>{
         })
         
 
-    }
+    
 
 
     
@@ -100,6 +103,7 @@ exports.record_patient_vitals = async(req,res) =>{
     
 
     return res.status(200).json({status:true, message: 'Record saved Successfully',})
+}
 
 
 
